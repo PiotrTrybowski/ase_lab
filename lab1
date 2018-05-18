@@ -1,0 +1,35 @@
+import random
+
+#print 'hello world'
+
+def make_list():
+	Lista = []
+	ilosc = 10
+	for i in range (0,ilosc):
+		wartosc = random.randint(1,100)
+		Lista.append(wartosc)
+	return Lista
+	
+gotowa_lista = make_list()
+print gotowa_lista
+#robocza_lista = gotowa_lista.copy()
+
+def bombelki(Lista):
+	bufor = 0
+	licznik = 0
+	lewa
+	prawa
+	while(licznik < len(Lista)):
+		for i in range (len(Lista)-1,0,-1):
+			if (Lista[i] < Lista[i-1]):
+				bufor = Lista[i] 
+				Lista[i] = Lista[i-1]
+				Lista[i-1] = bufor
+			
+		licznik +=1
+	return Lista
+	
+posortowana_lista = bombelki(gotowa_lista)
+print posortowana_lista
+
+def
