@@ -22,6 +22,15 @@ gotowa_lista3 = make_list()
 # robocza_lista = gotowa_lista.copy()
 
 def bombelki(Lista):
+    for i in range(len(Lista)-1,0,-1):
+        for j in range(i):
+            if Lista[j]>Lista[j+1]:
+                temp = Lista[j]
+                Lista[j] = Lista[j+1]
+                Lista[j+1] = temp
+    return Lista
+
+#def bombelki(Lista):
     bufor = 0
     licznik = 0
     while (licznik < len(Lista)):
@@ -70,7 +79,7 @@ def szybki(Lista):
             else:
                 punkty.append(x)
 
-    return szybki(mniejszy) + punkty + szybki(punkty)
+        return szybki(mniejszy) + punkty + szybki(wiekszy)
 
 posortowana_lista3 = szybki(gotowa_lista3)
 
