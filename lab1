@@ -1,35 +1,77 @@
 import random
 
-#print 'hello world'
+
+# print 'hello world'
 
 def make_list():
-	Lista = []
-	ilosc = 10
-	for i in range (0,ilosc):
-		wartosc = random.randint(1,100)
-		Lista.append(wartosc)
-	return Lista
-	
+    Lista = []
+    ilosc = 10
+    for i in range(0, ilosc):
+        wartosc = random.randint(1, 100)
+        Lista.append(wartosc)
+    return Lista
+
+
 gotowa_lista = make_list()
-print gotowa_lista
-#robocza_lista = gotowa_lista.copy()
+gotowa_lista2 = make_list()
+gotowa_lista3 = make_list()
+#print (gotowa_lista)
+#print(gotowa_lista2)
+
+
+# robocza_lista = gotowa_lista.copy()
 
 def bombelki(Lista):
-	bufor = 0
-	licznik = 0
-	lewa
-	prawa
-	while(licznik < len(Lista)):
-		for i in range (len(Lista)-1,0,-1):
-			if (Lista[i] < Lista[i-1]):
-				bufor = Lista[i] 
-				Lista[i] = Lista[i-1]
-				Lista[i-1] = bufor
-			
-		licznik +=1
-	return Lista
-	
-posortowana_lista = bombelki(gotowa_lista)
-print posortowana_lista
+    bufor = 0
+    licznik = 0
+    while (licznik < len(Lista)):
+        for i in range(len(Lista) - 1, 0, -1):
+            if (Lista[i] < Lista[i - 1]):
+                bufor = Lista[i]
+                Lista[i] = Lista[i - 1]
+                Lista[i - 1] = bufor
 
-def
+        licznik += 1
+    return Lista
+
+
+posortowana_lista = bombelki(gotowa_lista)
+print (posortowana_lista)
+
+def selekcja(Lista):
+    for i in range(len(Lista)):
+        biggest_pos = i
+        for j in range(i + 1, len(Lista)):
+            if Lista[biggest_pos] < Lista[j]:
+                biggest_pos = j
+        bufor = Lista[i]
+        Lista[i] = Lista[biggest_pos]
+        Lista[biggest_pos] = bufor
+    return Lista
+
+posortowana_lista2 = selekcja(gotowa_lista2)
+
+print(posortowana_lista2)
+
+def szybki(Lista):
+    if not Lista:
+        return []
+    else:
+
+        mniejszy = []
+        wiekszy = []
+        punkty = []
+
+        for x in Lista:
+            if x > Lista[0]:
+                wiekszy.append(x)
+            elif x < Lista[0]:
+                mniejszy.append(x)
+            else:
+                punkty.append(x)
+
+    return szybki(mniejszy) + punkty + szybki(punkty)
+
+posortowana_lista3 = szybki(gotowa_lista3)
+
+print(posortowana_lista3)
