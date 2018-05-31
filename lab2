@@ -1,0 +1,92 @@
+from _collections import defaultdict
+
+
+class Graph:
+  def __init__(self):
+    self.nodes = set()
+    self.edges = defaultdict(list)
+    self.distances = {}
+
+  def add_node(self, value):
+    self.nodes.add(value)
+
+  def add_edge(self, from_node, to_node, distance):
+    self.edges[from_node].append(to_node)
+    self.edges[to_node].append(from_node)
+    self.distances[(from_node, to_node)] = distance
+    self.distances[(to_node,from_node)] = distance
+
+
+
+def graph_walking(graph, initial):
+  visited = {initial: 0}
+  path = {}
+
+  nodes = set(graph.nodes)
+
+  while nodes:
+    min_node = None
+    for node in nodes:
+      if node in visited:
+        if min_node is None:
+          min_node = node
+        elif visited[node] < visited[min_node]:
+          min_node = node
+
+    if min_node is None:
+      break
+
+    nodes.remove(min_node)
+    current_weight = visited[min_node]
+
+    for edge in graph.edges[min_node]:
+      weight = current_weight + graph.distances[(min_node, edge)]
+      if edge not in visited or weight < visited[edge]:
+        visited[edge] = weight
+        path[edge] = min_node
+
+  return visited, path
+
+def weight_to_final(weights_to_nodes, final):
+    result = weights_to_nodes[final]
+    return result
+
+def da_wey(entrys_to_nodes, initial, final):
+    walker = final
+    wey = []
+    wey.append(final)
+    while walker != initial:
+        wey.append(entrys_to_nodes[walker])
+        walker = entrys_to_nodes[walker]
+    wey.reverse()
+    return wey
+
+
+
+new_graph = Graph()
+new_graph.add_node('a')
+new_graph.add_node('b')
+new_graph.add_node('c')
+new_graph.add_node('d')
+new_graph.add_node('e')
+new_graph.add_node('f')
+new_graph.add_node('g')
+new_graph.add_edge('a', 'c', 1)
+new_graph.add_edge('a', 'd', 2)
+new_graph.add_edge('c', 'b', 2)
+new_graph.add_edge('c', 'd', 1)
+new_graph.add_edge('c', 'e', 3)
+new_graph.add_edge('b', 'f', 3)
+new_graph.add_edge('d', 'g', 1)
+new_graph.add_edge('e', 'f', 2)
+new_graph.add_edge('g', 'f', 1)
+
+
+begining = input('give starting node ')
+end = input('give ending node ')
+
+weights_to_nodes, best_entrys_to_nodes = graph_walking(new_graph, begining)
+weight_to_end = weight_to_final(weights_to_nodes,end)
+road_to_end = da_wey(best_entrys_to_nodes,begining,end)
+print('weight from starting to end nodes = ',weight_to_end)
+print('minimal path = ',road_to_end)
