@@ -2,65 +2,74 @@ from _collections import defaultdict
 
 
 class Graph:
-  def __init__(self):
-    self.nodes = set()
-    self.edges = defaultdict(list)
-    self.distances = {}
+    def __init__(self):
+        self.nodes = set()              # All nodes are stored in a set
+        self.edges = defaultdict(list)  # Edges are stored as dictionaries of lists: keys are nodes and values are lists of nodes connected to key node
+        self.distances = {}             # Distances are stored as dictionaries: keys are node pairs and values are distances
 
-  def add_node(self, value):
-    self.nodes.add(value)
+    def add_node(self, value):
+        self.nodes.add(value)
 
-  def add_edge(self, from_node, to_node, distance):
-    self.edges[from_node].append(to_node)
-    self.edges[to_node].append(from_node)
-    self.distances[(from_node, to_node)] = distance
-    self.distances[(to_node,from_node)] = distance
+    def add_edge(self, from_node, to_node, distance):
+        self.edges[from_node].append(to_node)
+        self.edges[to_node].append(from_node)
+        self.distances[(from_node, to_node)] = distance
+        self.distances[(to_node, from_node)] = distance
 
 
+def graph_walking(graph, initial):  # function that walks through the graph starting AT GIVEN NODE and determines
+                                    # weights required to get to every node, and the best way to "approach" a node KNOWING FIRST NODE
+    visited = {initial: 0}          # visited is a dictionary in which a node is a key and weight required is value
+                                    # We store nodes that were already visited by algorythm here (for initial node the value is 0)
+    path = {}                       # path is a dictionary in which a key is a node and value is best "approach" node
 
-def graph_walking(graph, initial):
-  visited = {initial: 0}
-  path = {}
+    nodes = set(graph.nodes)        # import node set from graph
 
-  nodes = set(graph.nodes)
+    while nodes:                                          #main loop of algorythm: works as long as there are nodes to visit
+        min_node = None
+        for node in nodes:                                #loop that finds the min_node: the best node to approach each node
+            if node in visited:
+                if min_node is None:
+                    min_node = node
+                elif visited[node] < visited[min_node]:
+                    min_node = node                        #if there are no candidates: currently checked node becomes the best
+                                                           #if there exists min_node: current node is picked if its value in visited dictionary
+        if min_node is None:                               #is smaller than current min_node (initial node's value is 0 so its always its own min_node)
+            break
 
-  while nodes:
-    min_node = None
-    for node in nodes:
-      if node in visited:
-        if min_node is None:
-          min_node = node
-        elif visited[node] < visited[min_node]:
-          min_node = node
+        nodes.remove(min_node)                             #min_node is removed so that we don't walk back into it
+        current_weight = visited[min_node]                 #current_weight is a temporary value of currently known best weight needed to get into node
 
-    if min_node is None:
-      break
+        for edge in graph.edges[min_node]:                              #loop that finds a weight needed to get into a node. edges[min_nodes] is a list of possible nodes to go to from min_node
+            weight = current_weight + graph.distances[(min_node, edge)] #weight adds known current_weight to a distance known from graph declaration (for first step its 0+0)
+            if edge not in visited or weight < visited[edge]:           #conditional that updates value of visited dictionary and path list if this is the first time we visited new node
+                visited[edge] = weight                                  #or weight (full weight needed to go into that edge) is smaller than current value for the node key
+                path[edge] = min_node
 
-    nodes.remove(min_node)
-    current_weight = visited[min_node]
+    return visited, path    #
 
-    for edge in graph.edges[min_node]:
-      weight = current_weight + graph.distances[(min_node, edge)]
-      if edge not in visited or weight < visited[edge]:
-        visited[edge] = weight
-        path[edge] = min_node
 
-  return visited, path
-
-def weight_to_final(weights_to_nodes, final):
+def weight_to_final(weights_to_nodes, final):   #support function that checks which weight is interesting to us specified when Dijsktra is called
     result = weights_to_nodes[final]
     return result
 
-def da_wey(entrys_to_nodes, initial, final):
+
+def da_wey(entrys_to_nodes, initial, final):    #support function that appends all the best entrys to nodes untill initial and final node are connected
     walker = final
     wey = []
     wey.append(final)
     while walker != initial:
         wey.append(entrys_to_nodes[walker])
         walker = entrys_to_nodes[walker]
-    wey.reverse()
+    wey.reverse()                               #this function starts at the begining so the actual path needs to be reversed to make sense
     return wey
 
+def Dijsktra(graph, initial, final):            #wrap up function that takes the graph, first node, last node and spits out weight from first to last and the path
+    weights_to_nodes, best_entrys_to_nodes = graph_walking(graph, initial)
+    weight_to_end = weight_to_final(weights_to_nodes, final)
+    road_to_end = da_wey(best_entrys_to_nodes, initial, final)
+    print('weight from starting to end nodes = ', weight_to_end)
+    print('minimal path = ', road_to_end)
 
 
 new_graph = Graph()
@@ -81,12 +90,7 @@ new_graph.add_edge('d', 'g', 1)
 new_graph.add_edge('e', 'f', 2)
 new_graph.add_edge('g', 'f', 1)
 
-
 begining = input('give starting node ')
 end = input('give ending node ')
 
-weights_to_nodes, best_entrys_to_nodes = graph_walking(new_graph, begining)
-weight_to_end = weight_to_final(weights_to_nodes,end)
-road_to_end = da_wey(best_entrys_to_nodes,begining,end)
-print('weight from starting to end nodes = ',weight_to_end)
-print('minimal path = ',road_to_end)
+print(Dijsktra(new_graph,begining,end))
